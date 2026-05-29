@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".DashboardActivity">
+
+    <!-- Toolbar  = barra superior de herramientas -->
+    <com.google.android.material.appbar.MaterialToolbar
+        app:title="APP SENATI"
+        android:background="#54a0ff"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <!-- TabLayout (pestaña capas) -->
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
+        app:tabIndicatorColor="#000"
+        app:tabSelectedTextColor="#000"
+        app:tabTextColor="#000"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <!-- Contenedor de fragmentos -->
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+</LinearLayout>
