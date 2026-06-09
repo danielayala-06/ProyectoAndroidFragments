@@ -1,5 +1,7 @@
 package com.example.myapplicationworld.fragments;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -37,7 +39,7 @@ public class RecepcionFragment extends Fragment
     EditText edtBuscarID;
 
     // Button
-    Button btnBuscarId;
+    Button btnBuscarId, btnActualizar;
 
     // RadioButtons
     RadioButton resrbtBueno, resrbtRegular, resrbtMalo;
@@ -71,11 +73,33 @@ public class RecepcionFragment extends Fragment
 
 
         btnBuscarId = view.findViewById(R.id.btnBuscarHerramienta);
+        btnActualizar = view.findViewById(R.id.btnActualizarHerramienta);
 
         btnBuscarId.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 buscarHerramienta();
+            }
+        });
+        btnActualizar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(readyUI()){
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    builder.setTitle("Actualizar Registro");
+                    builder.setMessage("¿Estas seguro de actualizar?");
+                    builder.setPositiveButton("Aceptar", (a,b)->{
+                        actualizarHerramienta();
+                    });
+                    builder.setNegativeButton("Cancelar", null);
+
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+
+                }else{
+                    Toast.makeText(getContext(), "Ingrese todos los datos porfavor", Toast.LENGTH_LONG).show();
+                }
+
             }
         });
     }
@@ -151,6 +175,66 @@ public class RecepcionFragment extends Fragment
         }
     }
 
+    public void actualizarHerramienta(){
+        // Preparamos los datos a enviar
+        try {
+            String tipo="", condicion="";
+            String endpoint = URL+edtBuscarID.getText().toString();
+
+            if(resrbtBueno.isChecked())condicion = "bueno";
+            if(resrbtRegular.isChecked())condicion = "regular";
+            if(resrbtMalo.isChecked())condicion = "malo";
+
+            if(resrbtElectrico.isChecked())tipo = "electrica";
+            if(resrbtManual.isChecked())tipo = "manual";
+
+            JSONObject data = new JSONObject();
+
+            data.put("nombre", resNombre.getText().toString());
+            data.put("marca", resMarca.getText().toString());
+            data.put("descripcion", resDescripcion.getText().toString());
+            data.put("condicion", condicion);
+            data.put("tipo", tipo);
+
+            requestQueue = Volley.newRequestQueue(getContext().getApplicationContext());
+
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                    Request.Method.PUT,
+                    endpoint,
+                    data,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject jsonObject) {
+
+                            try {
+                                boolean success = jsonObject.getBoolean("success");
+                                String message = jsonObject.getString("message");
+
+                                if(!success){
+                                    Toast.makeText(getContext(), "Error", Toast.LENGTH_LONG).show();
+                                }
+                                Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
+
+                            } catch (Exception e) {
+                                Log.e("ErrorJSON", e.toString());
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError volleyError) {
+                            Log.e("ErrorREQUEST", volleyError.toString());
+                        }
+                    }
+            );
+
+            requestQueue.add(jsonObjectRequest);
+
+
+        } catch (Exception e) {
+            Log.e("ErrorJSON", e.toString());
+        }
+    }
     public void seleccionarCondicion(String condicion){
         if(condicion.equals("bueno"))resrbtBueno.setChecked(true);
         if(condicion.equals("regular"))resrbtRegular.setChecked(true);
@@ -161,5 +245,22 @@ public class RecepcionFragment extends Fragment
         if(tipo.equals("manual"))resrbtManual.setChecked(true);
         if(tipo.equals("electrica"))resrbtElectrico.setChecked(true);
 
+    }
+
+    private boolean readyUI(){
+        boolean ready = true;
+
+        if(resNombre.getText().toString().isEmpty())ready = false;
+        if(resMarca.getText().toString().isEmpty())ready = false;
+        if(resDescripcion.getText().toString().isEmpty())ready = false;
+
+        if(!resrbtBueno.isChecked()
+                && !resrbtRegular.isChecked()
+                && !resrbtMalo.isChecked())ready = false;
+
+        if(!resrbtManual.isChecked()
+                && !resrbtElectrico.isChecked())ready = false;
+
+        return ready;
     }
 }
