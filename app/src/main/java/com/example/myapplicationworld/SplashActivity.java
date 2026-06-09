@@ -21,6 +21,6 @@ public class SplashActivity extends AppCompatActivity {
                 startActivity(intent); // Inicia la UI
                 finish(); // Splash salga de memoria
             }
-        }, 2000);
+        }, 1000);
     }
 }
