@@ -176,8 +176,8 @@ public class RecepcionFragment extends Fragment
     }
 
     public void actualizarHerramienta(){
-        // Preparamos los datos a enviar
         try {
+            // Preparamos los datos a enviar
             String tipo="", condicion="";
             String endpoint = URL+edtBuscarID.getText().toString();
 
@@ -185,7 +185,7 @@ public class RecepcionFragment extends Fragment
             if(resrbtRegular.isChecked())condicion = "regular";
             if(resrbtMalo.isChecked())condicion = "malo";
 
-            if(resrbtElectrico.isChecked())tipo = "electrica";
+            if(resrbtElectri co.isChecked())tipo = "electrica";
             if(resrbtManual.isChecked())tipo = "manual";
 
             JSONObject data = new JSONObject();
